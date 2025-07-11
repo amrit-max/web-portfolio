@@ -172,4 +172,15 @@ if (contactForm) {
     alert('Thank you for your message! I will get back to you soon.');
     this.reset();
   });
-} 
+}
+
+// Loader Animation
+window.addEventListener('load', () => {
+  const loader = document.getElementById('loader');
+  if (loader) {
+    setTimeout(() => {
+      loader.style.opacity = '0';
+      setTimeout(() => loader.style.display = 'none', 500);
+    }, 900); // Loader duration
+  }
+}); 
