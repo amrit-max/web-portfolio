@@ -8,7 +8,9 @@ navLinks.forEach(link => {
     const target = document.querySelector(this.getAttribute('href'));
     if (target) {
       e.preventDefault();
-      target.scrollIntoView({ behavior: 'smooth' });
+      // Use instant scroll on mobile, smooth on desktop
+      const isMobile = window.innerWidth <= 768;
+      target.scrollIntoView({ behavior: isMobile ? 'auto' : 'smooth' });
       // Set active class
       navLinks.forEach(l => l.classList.remove('active'));
       this.classList.add('active');
@@ -61,14 +63,16 @@ window.addEventListener('scroll', () => {
   }
 });
 backToTop.addEventListener('click', () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  const isMobile = window.innerWidth <= 768;
+  window.scrollTo({ top: 0, behavior: isMobile ? 'auto' : 'smooth' });
 });
 
 // Hero CTA Button Scroll
 const viewWorkBtn = document.getElementById('viewWorkBtn');
 if (viewWorkBtn) {
   viewWorkBtn.addEventListener('click', () => {
-    document.getElementById('projects').scrollIntoView({ behavior: 'smooth' });
+    const isMobile = window.innerWidth <= 768;
+    document.getElementById('projects').scrollIntoView({ behavior: isMobile ? 'auto' : 'smooth' });
   });
 }
 
@@ -174,13 +178,48 @@ if (contactForm) {
   });
 }
 
-// Loader Animation
+// Enhanced Loader Animation
 window.addEventListener('load', () => {
   const loader = document.getElementById('loader');
-  if (loader) {
-    setTimeout(() => {
-      loader.style.opacity = '0';
-      setTimeout(() => loader.style.display = 'none', 500);
-    }, 900); // Loader duration
+  const progressFill = document.querySelector('.progress-fill');
+  const progressText = document.querySelector('.progress-text');
+  
+  if (loader && progressFill && progressText) {
+    // Simulate loading progress
+    const loadingSteps = [
+      { progress: 20, text: 'Initializing...' },
+      { progress: 40, text: 'Loading assets...' },
+      { progress: 60, text: 'Preparing content...' },
+      { progress: 80, text: 'Almost ready...' },
+      { progress: 100, text: 'Welcome!' }
+    ];
+    
+    let currentStep = 0;
+    
+    const updateProgress = () => {
+      if (currentStep < loadingSteps.length) {
+        const step = loadingSteps[currentStep];
+        progressFill.style.width = step.progress + '%';
+        progressText.textContent = step.text;
+        currentStep++;
+        
+        if (currentStep < loadingSteps.length) {
+          setTimeout(updateProgress, 400);
+        } else {
+          // Final step - hide loader
+          setTimeout(() => {
+            loader.style.opacity = '0';
+            setTimeout(() => {
+              loader.style.display = 'none';
+              // Trigger any post-load animations
+              document.body.classList.add('loaded');
+            }, 800);
+          }, 600);
+        }
+      }
+    };
+    
+    // Start progress updates after a brief delay
+    setTimeout(updateProgress, 300);
   }
 }); 
